@@ -30,17 +30,16 @@ def make_post_request(url, data):
         logger.error('Response: %s', response.json())
         return None
 
-def process_tsv_file(file_path, locale, interval):
+def process_tsv_file(file_path, locale, locale_id, interval):
     with open(file_path, 'r', newline='', encoding='utf-8') as tsvfile:
         reader = csv.reader(tsvfile, delimiter='\t')
         for row in reader:
-            sentence = row[0]
-            source = row[1]
+            sentence, source = row
             response = make_post_request('https://commonvoice.mozilla.org/api/v1/sentences',
                                          {
                                              'sentence': sentence,
                                              'source': source,
-                                             'localeId': 81129,
+                                             'localeId': locale_id,
                                              'localeName': locale
                                          })
             if response:
@@ -57,12 +56,14 @@ if __name__ == '__main__':
         description='Send sentences to common voice api using data from a TSV file')
     parser.add_argument('file_path', help='path to the input TSV file')
     parser.add_argument('-l', '--locale', help='locale name')
+    parser.add_argument('-li', '--locale_id', type=int, help='locale id')
     parser.add_argument('-i', '--interval', type=int,
                         default=0, help='interval between requests')
     args = parser.parse_args()
     try:
         process_tsv_file(args.file_path,
-                         args.locale, 
+                         args.locale,
+                         args.locale_id, 
                          args.interval)
     except Exception as error:
         logger.error('An error occurred: %s', error)
