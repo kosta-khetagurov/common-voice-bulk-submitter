@@ -6,6 +6,12 @@
 
 python 3.11
 
+## Как использовать?
+
+```python main.py -h```
+
 ## Пример использования
 
-```python3 .\main.py os-greetings.tsv -l=os -i=6```
+### Для осетинского
+
+```python main.py os-greetings.tsv -l=os -li=81129 -i=6```
