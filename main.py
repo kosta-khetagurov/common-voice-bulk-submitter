@@ -5,6 +5,8 @@ import time
 
 import requests
 
+from conversions.preprocess import preprocess
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -35,6 +37,8 @@ def process_tsv_file(file_path, locale, locale_id, interval):
         reader = csv.reader(tsvfile, delimiter='\t')
         for row in reader:
             sentence, source = row
+            sentence = preprocess(sentence, locale)
+            source = preprocess(source, locale)
             response = make_post_request('https://commonvoice.mozilla.org/api/v1/sentences',
                                          {
                                              'sentence': sentence,
@@ -63,7 +67,7 @@ if __name__ == '__main__':
     try:
         process_tsv_file(args.file_path,
                          args.locale,
-                         args.locale_id, 
+                         args.locale_id,
                          args.interval)
     except Exception as error:
         logger.error('An error occurred: %s', error)
